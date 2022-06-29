@@ -86,7 +86,7 @@
 						<label for="maxZerofuelWeight">MZFW
 							<input class="flightData_input" type="number"
 							name="maxZerofuelWeight" id="maxZerofuelWeight"
-							v-model="maxZerofuelWeight">
+							v-model="maxZerofuelWeight" disabled>
 						</label>
 					</div>
 					<div class="formSorter">
@@ -96,59 +96,69 @@
 						</label>
 						<label for="maxTakeoffWeight">MTOW
 							<input class="flightData_input" type="number" name="maxTakeoffWeight" id="maxTakeoffWeight"
-							>
+							v-model="maxTakeoffWeight" disabled>
 						</label>
 					</div>
 					<div class="formSorter">
 						<label for="estLandingWeight">ELDW
-							<input class="flightData_input" type="number" name="estLandingWeight" id="estLandingWeight">
+							<input class="flightData_input" type="number" name="estLandingWeight" id="estLandingWeight"
+							v-model="estLandingWeight">
 						</label>
 						<label for="maxLandingWeight">MLDW
 							<input class="flightData_input" type="number" name="maxLandingWeight" id="maxLandingWeight"
-							>
+							v-model="maxLandingWeight" disabled>
 						</label>
 					</div>
 				</fieldset>
 				<fieldset class="data_fuelData flightDataSub">
-					<label for="taxiOut">TAXI OUT
-						<input class="flightData_input" type="number" name="taxiOut" id="taxiOut"
-						:value="airlineData.taxiOut">
-					</label>
+					<div class="formSorter">
+						<label for="taxiOut">TAXI OUT
+							<input class="flightData_input" type="number" name="taxiOut" id="taxiOut"
+							v-model="taxiOut">
+						</label>
+						<label for="taxiIn">TAXI IN
+							<input class="flightData_input" type="number" name="taxiIn" id="taxiIn"
+							v-model="taxiIn">
+						</label>
+
+					</div>
 					<div class="formSorter">
 						<label for="hold">HOLD
 							<input class="flightData_input" type="number" name="hold" id="hold"
-							:value="airlineData.hold">
+							v-model="hold">
 						</label>
 						<label for="coningency">CONTINGENCY
-							<input class="flightData_input" type="number" name="coningency"
-							id="coningency" :value="airlineData.contingency">
+							<input class="flightData_input" type="number" name="coningency"	id="coningency"
+							v-model="contingency">
 						</label>
 					</div>
 					<label for="ballast">BALLAST
-						<input class="flightData_input" type="number" name="ballast" id="ballast">
+						<input class="flightData_input" type="number" name="ballast" id="ballast"
+						v-model="ballast">
 					</label>
 					<div  class="formSorter">
 						<label for="mandatory">MANDATORY
-							<input class="flightData_input" type="number" name="mandatory"
-							id="mandatory">
+							<input class="flightData_input" type="number" name="mandatory" id="mandatory"
+							v-model="mandatory">
 						</label>
 						<label for="extra">EXTRA
-							<input class="flightData_input" type="number" name="extra" id="extra">
+							<input class="flightData_input" type="number" name="extra" id="extra"
+							v-model="extra">
 						</label>
 					</div>
 					<div class="formSorter">
 						<label for="blockFuel">BLOCK FUEL
-							<input class="flightData_input" type="number" name="blockFuel"
-							id="blockFuel">
+							<input class="flightData_input" type="number" name="blockFuel" id="blockFuel"
+							v-model="blockFuel">
 						</label>
 						<label for="landingFuel">LANDING FUEL
-							<input class="flightData_input" type="number" name="landingFuel"
-							id="landingFuel">
+							<input class="flightData_input" type="number" name="landingFuel" id="landingFuel"
+							v-model="landingFuel">
 						</label>
 					</div>
 					<label for="tankeringFuel">TANKERING FUEL
-						<input class="flightData_input" type="checkbox" name="tankeringFuel"
-						id="tankeringFuel">
+						<input class="flightData_input" type="checkbox" name="tankeringFuel" id="tankeringFuel"
+						v-model="tankeringFuel">
 					</label>
 					<button class="flightData_button dotted basicButtonColors"
 						id="flightData_button-remarks">РЕМАРКИ</button>
@@ -166,7 +176,7 @@
 				</div>
 			<div class="flightDataContainer_buttons">
 				<button class="flightData_button mainButtons basicButtonColors" id="button-save"
-				form="flightDataForm" type="button" @click="saveFlight" >СОХРАНИТЬ</button>
+				form="flightDataForm" type="button" @click="saveFlight(props.activeFlightId)" >СОХРАНИТЬ</button>
 				<button class="flightData_button mainButtons basicButtonColors"
 				id="button-compute" form="flightDataForm" formtarget="_blank" :disabled="warning">
 					РАССЧИТАТЬ
@@ -195,35 +205,40 @@ const props = defineProps({
 });
 
 const choosenFlightId = toRef(props, 'activeFlightId');
-const flightForm = reactive({});
-Object.assign(flightForm, props.activeFlight);
-
+// eslint-disable-next-line vue/no-setup-props-destructure
+const { ...choosenFlight } = props.activeFlight;
+// заполняем форму либо исходными значениями, либо данными из полученной формы
 const {
 	flightId = ref(), dateOfFlight = ref(''), eobt = ref(''), regNumber = ref('выберите ВС'),
 	departure = ref(''), arrival = ref(''), altn1 = ref(''),
-	speed = ref(''), maxFlightLevel = ref<string|number>(''), payload = ref(0),
-	dryOperationWeight = ref<number|string>(''),
-	estTakeoffWeight = ref<string|number>(''),
-	maxZerofuelWeight = ref<string|number>(''),
-} = toRefs(flightForm);
-const warning = ref(false);
+	speed = ref(''), maxFlightLevel = ref<number|string>(''), payload = ref(0),
+	dryOperationWeight = ref<number|string>(''), maxZerofuelWeight = ref<number|string>(''),
+	maxTakeoffWeight = ref<number|string>(''), estTakeoffWeight = ref<number|string>(''),
+	estLandingWeight = ref<number|string>(''), maxLandingWeight = ref<number|string>(''),
+	taxiOut = ref(airlineData.taxiOut), taxiIn = ref(airlineData.taxiIn), hold = ref(airlineData.hold),
+	contingency = ref(airlineData.contingency),
+	ballast = ref<number|string>(''), mandatory = ref<number|string>(''), extra = ref<number|string>(''),
+	blockFuel = ref<number|string>(''), landingFuel = ref<number|string>(''), tankeringFuel = ref(false),
+} = toRefs(choosenFlight);
 
-// const { maxZerofuelWeight } = toRefs(aircraft);
+// отслеживаем изменение ВС и при необходимости переписываем соответсвующие переменные
 const activeAircraft = reactive({});
 watch(regNumber, (newValue: string) => {
 	Object.assign(activeAircraft, aircraftList.find((plane) => plane.registration === newValue));
 	speed.value = activeAircraft.speed;
 	maxFlightLevel.value = activeAircraft.maxFlightLevel;
 	dryOperationWeight.value = activeAircraft.basicWeight;
-	// estZeroFuelWeight.value = Number(activeAircraft.basicWeight) + payload.value;
+	maxZerofuelWeight.value = activeAircraft.maxZerofuelWeight;
+	maxLandingWeight.value = activeAircraft.maxLandingWeight;
+	maxTakeoffWeight.value = activeAircraft.maxTakeoffWeight;
 });
 
 const estZeroFuelWeight = computed(() => dryOperationWeight.value + payload.value);
 
-// заполнение формы
+const warning = ref(false);
 
 // собираем все значения input из формы  как объект и сохраняем в массив
-function saveFlight() {
+function saveFlight(id: number) {
 	const flightFormElements = document.forms.flightDataForm.elements;
 	const form = Array.from(flightFormElements);
 	const formFiltered = form.filter((el) => el.tagName === 'INPUT' || el.tagName === 'SELECT');
@@ -231,8 +246,13 @@ function saveFlight() {
 	formFiltered.forEach((el) => {
 		flight[el.id] = el.value.toUpperCase();
 	});
-	flight.id = Date.now();
-	flightList.push(flight);
+	if (id === 0) {
+		flight.id = Date.now();
+		flightList.push(flight);
+	} else {
+		const element = flightList.find((el) => el.id === id);
+		flightList.splice(flightList.indexOf(element), 1, flight);
+	}
 }
 
 // eslint-disable-next-line no-undef
