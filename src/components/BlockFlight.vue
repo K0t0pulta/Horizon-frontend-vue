@@ -31,7 +31,8 @@
 					</div>
 					<label for="regNumber">REG
 						<select id="regNumber" name="regNumber" class="flightData_input"
-						v-model="regNumber" required :class="{empty: regNumber === 'выберите ВС'}">
+						v-model="regNumber" required
+						:class="{empty: regNumber === 'выберите ВС'}">
 							<option value="выберите ВС" disabled selected hidden>выберите ВС</option>
 							<option v-for="aircraft in aircraftList" :value="aircraft.registration"
 							:key="aircraft.msn">{{ aircraft.registration }}</option>
@@ -54,54 +55,57 @@
 				<fieldset class="data_otherData flightDataSub">
 					<button @click.prevent="addAlternateAirport">Добавить запасной аэродром</button>
 					<label for="altn1">ALTN 1
-						<input class="flightData_input" type="text" name="altn1" id="altn1">
+						<input class="flightData_input" type="text" name="altn1" id="altn1"
+						v-model="altn1">
 					</label>
 					<label for="speed">SPEED
 						<input class="flightData_input" type="text" name="speed" id="speed"
 						v-model="speed">
 					</label>
-					<label for="maxFL">MAX FL
-						<input class="flightData_input" type="text" name="maxFL" id="maxFL"
+					<label for="maxFlightLevel">MAX FL
+						<input class="flightData_input" type="text" name="maxFlightLevel" id="maxFlightLevel"
 						v-model="maxFlightLevel">
 					</label>
 					<button class="flightData_button dotted basicButtonColors"
 					id="flightData_button-enrouteALTN">ЗАПАСНЫЕ ПО МАРШРУТУ</button>
 				</fieldset>
 				<fieldset class="data_massData flightDataSub">
-					<label for="dow">DOW
-						<input class="flightData_input" type="number" name="dow" id="dow"
-						v-model="basicWeight">
+					<label for="dryOperationWeight">DOW
+						<input class="flightData_input" type="number" name="dryOperationWeight" id="dryOperationWeight"
+						v-model="dryOperationWeight">
 					</label>
 					<label for="payload">PLD
 						<input class="flightData_input" name="payload" id="payload"
 						v-model.number="payload">
 					</label>
 					<div class="formSorter">
-						<label for="ezfw">EZFW
-							<input class="flightData_input" name="ezfw" id="ezfw"
+						<label for="estZeroFuelWeight">EZFW
+							<input class="flightData_input" name="estZeroFuelWeight" id="estZeroFuelWeight"
 							v-model.number="estZeroFuelWeight">
 						</label>
-						<label for="mzfw">MZFW
-							<input class="flightData_input" type="number" name="mzfw" id="mzfw"
-							v-model.number="maxZerofuelWeight">
+						<label for="maxZerofuelWeight">MZFW
+							<input class="flightData_input" type="number"
+							name="maxZerofuelWeight" id="maxZerofuelWeight"
+							v-model="maxZerofuelWeight">
 						</label>
 					</div>
 					<div class="formSorter">
-						<label for="etow">ETOW
-							<input class="flightData_input" type="number" name="etow" id="etow">
+						<label for="estTakeoffWeight">ETOW
+							<input class="flightData_input" type="number" name="estTakeoffWeight" id="estTakeoffWeight"
+							v-model="estTakeoffWeight">
 						</label>
-						<label for="mtow">MTOW
-							<input class="flightData_input" type="number" name="mtow" id="mtow"
-							v-model.number="maxTakeoffWeight">
+						<label for="maxTakeoffWeight">MTOW
+							<input class="flightData_input" type="number" name="maxTakeoffWeight" id="maxTakeoffWeight"
+							>
 						</label>
 					</div>
 					<div class="formSorter">
-						<label for="eldw">ELDW
-							<input class="flightData_input" type="number" name="eldw" id="eldw">
+						<label for="estLandingWeight">ELDW
+							<input class="flightData_input" type="number" name="estLandingWeight" id="estLandingWeight">
 						</label>
-						<label for="mldw">MLDW
-							<input class="flightData_input" type="number" name="mldw" id="mldw"
-							v-model.number="maxLandingWeight">
+						<label for="maxLandingWeight">MLDW
+							<input class="flightData_input" type="number" name="maxLandingWeight" id="maxLandingWeight"
+							>
 						</label>
 					</div>
 				</fieldset>
@@ -191,22 +195,30 @@ const props = defineProps({
 });
 
 const choosenFlightId = toRef(props, 'activeFlightId');
+const flightForm = reactive({});
+Object.assign(flightForm, props.activeFlight);
 
 const {
-	flightId = ref(''), dateOfFlight, eobt, departure, arrival, payload = ref(0), regNumber = ref('выберите ВС'),
-} = toRefs(props.activeFlight);
-
+	flightId = ref(), dateOfFlight = ref(''), eobt = ref(''), regNumber = ref('выберите ВС'),
+	departure = ref(''), arrival = ref(''), altn1 = ref(''),
+	speed = ref(''), maxFlightLevel = ref<string|number>(''), payload = ref(0),
+	dryOperationWeight = ref<number|string>(''),
+	estTakeoffWeight = ref<string|number>(''),
+	maxZerofuelWeight = ref<string|number>(''),
+} = toRefs(flightForm);
 const warning = ref(false);
 
-const activeAircraft = reactive(aircraftList.find((plane) => plane.registration === regNumber.value));
-// отслеживаем изменение выбранного ВС и переписываем объект activeAircraft для дальнейшей работы с ним
+// const { maxZerofuelWeight } = toRefs(aircraft);
+const activeAircraft = reactive({});
+watch(regNumber, (newValue: string) => {
+	Object.assign(activeAircraft, aircraftList.find((plane) => plane.registration === newValue));
+	speed.value = activeAircraft.speed;
+	maxFlightLevel.value = activeAircraft.maxFlightLevel;
+	dryOperationWeight.value = activeAircraft.basicWeight;
+	// estZeroFuelWeight.value = Number(activeAircraft.basicWeight) + payload.value;
+});
 
-const {
-	basicWeight, maxZerofuelWeight, maxFlightLevel, maxTakeoffWeight, maxLandingWeight,
-	speed,
-} = toRefs(activeAircraft);
-
-const estZeroFuelWeight = computed(() => basicWeight.value + payload.value);
+const estZeroFuelWeight = computed(() => dryOperationWeight.value + payload.value);
 
 // заполнение формы
 
