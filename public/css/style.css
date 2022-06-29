@@ -1,0 +1,464 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    
+}
+
+:root {
+    --first-bg-color: #A3AFDA;
+    --second-bg-color: #ECFDFF;
+    --main-button-color: #3EDBF0;
+    --header-bg-color: #FEFE85;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+nav {
+    padding: 0;
+}
+
+a {
+    text-align: center;
+    text-decoration: none; 
+    color: black;
+}
+
+button {
+    word-wrap: break-word;
+    background-color: var(--main-button-color);
+    filter: drop-shadow(2px 4px 4px rgba(0, 0, 0, 0.55));
+    cursor: pointer;
+}
+
+.basicButtonColors:hover {
+    background-color: var(--first-bg-color);
+}
+
+/*ШАПКА САЙТА*/
+
+.container {
+    /* margin: 0 10px 0 10px; */
+    display: flex;
+    flex-direction: column;
+    width: 98vw;
+    max-width: 98vw;
+    height: 100vh;
+    max-height: 100vh;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    width: 100%;
+    height: 6vh;
+    background-color: var(--first-bg-color);
+}
+
+
+.logoNest {
+    max-width: 66px;
+}
+
+.logoNest img{
+    width: 100%;
+    height: 100%;
+}
+
+.dateContainer {
+    margin-top: auto;
+    margin-bottom: auto;
+    padding: 0 10px;
+    text-align: center;
+    font-size: 1.0vw;
+}
+
+.navigation {
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-around;
+    align-items: stretch;
+    width: max-content;
+}
+
+.navigation_subDirectory {
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-right: 10px;
+    padding-left: 10px;
+    box-shadow: 0px 6px 6px 0px #0000008C;
+    background: linear-gradient(180deg, #3EDBF0 0%, rgba(62, 219, 240, 0) 100%);
+    cursor: pointer;
+}
+
+.navigation_subDirectory:last-child {
+    margin-right: 0;
+}
+
+.navigation_subDirectory:hover {
+    outline: 2px solid var(--main-button-color);
+}
+
+.navigation_subDirectory a {
+    font-size: 1.5vw;
+}
+
+.exitContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    /* height: 100%; */
+    font-size: 1.1vw;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: #FEFE85;
+}
+
+
+/*mainBody*/
+
+.mainBody {
+    display: flex;
+    align-items: stretch;
+    height: calc(100% - 66px);
+    flex-grow: 1;
+    border: 1px solid black;
+    background-color: var(--second-bg-color);
+}
+
+.mainContent {
+    display: flex;
+    flex-grow: 1;
+}
+
+
+/*блок расписания*/
+
+/*блок расписания шапка*/
+
+.scheduleContainer {
+    display: flex;
+    flex-basis: 20%;
+    flex-direction: column;
+    min-width: 15%;
+    border-right: 1px solid #000;
+}
+
+.sheduleContainer_header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    /* padding-right: 10px; */
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: var(--header-bg-color);
+}
+
+.sheduleContainer_header_title {
+    font-size: 24px;
+}
+
+.sorter_sortBy input[type='radio'] {
+    display: none;
+}
+
+.sheduleContainer_header_sorter {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.sorter_sortBy label {
+    padding-left: 3px;
+    padding-right: 3px;
+    border-radius: 3px;
+    border: 1px solid black;
+    user-select: none;
+    box-shadow: inset 4px 4px 4px rgba(0, 0, 0, 0.25);
+    background-color:  #E5E5E5;
+    cursor: pointer;
+}
+
+.sorter_sortBy input[type='radio']:checked + label {
+    background-color: #fff;
+    border: 2px solid #FDAF75;
+    box-shadow: none;
+}
+
+.sorter_filter input{
+    border-left: none;
+    border-top: none;
+    border-right: none;
+    width: 140px;
+    height: 20px;
+    cursor: pointer;
+}
+
+/*блок расписания кнопки*/
+
+.scheduleContainer_buttons {
+    display: flex;
+    justify-content: space-between;
+    background-color: #ECFDFF;
+}
+
+.scheduleButton {
+    padding-left: 8px;
+    padding-top: 5px;
+    padding-right: 8px;
+    padding-bottom: 5px;
+    cursor: pointer;
+}
+
+.addFlight {
+    border-radius: 0px 0px 10px 0px;
+    cursor: pointer;
+}
+
+.updateSchedule {
+    border-radius: 0px 0px 10px 10px;
+}
+
+.deleteFlight {
+    border-radius: 0px 0px 0px 10px;
+    cursor: pointer;
+}
+
+/*блок расписания основной*/
+
+.scheduleContainer_listContainer {
+    min-height: max-content;
+    flex-grow: 1;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    background-color: #ECFDFF;
+    overflow-y: scroll;
+}
+
+.scheduleContainer_listContainer_list {
+    list-style-type:none;
+}
+
+.scheduleContainer_listContainer_list li {
+    margin-top: 5px;
+}
+
+.list_flight {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.list_flight_flight-data {
+    width: 80%;
+    font-size: 12px;
+}
+
+.list_flight_flight_open {
+    width: 30px;
+    height: 30px;
+    visibility: hidden;
+}
+
+.list_flight:hover  .list_flight_flight_open {
+    visibility: visible;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* блок рейса */
+
+.flightDataContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-basis: 20%;
+    min-width: 300px;
+    height: 100%;
+    font-size: 0.7rem;
+    border-right: 1px solid #000;
+}
+
+#flightDataForm {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex-grow: 1;
+    height: 100%;
+}
+
+
+.flightDataContainer_header {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 2px;
+    padding-right: 10px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    background-color: var(--header-bg-color);
+}
+
+.flightDataContainer_header_cross {
+    cursor: pointer;
+    padding: 0 3px;
+}
+
+.flightDataContainer_header_cross:hover {
+    outline: 1px solid red;
+    border-radius: 50%;
+}
+
+.flightDataContainer_units {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+    font-size: 0.7rem;
+    background-color: var(--first-bg-color);
+}
+
+.flightDataContainer_data {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding-top: 10px;
+    max-height: 100%;
+}
+
+.data_routeData {
+    position: relative;
+    padding-bottom: 20px;
+}
+
+/* .data_fuelData {
+    max-height: 180px;
+} */
+
+.data_infoData {
+    flex-grow: 5;
+    display: flex;
+    margin-left: -10px;
+    max-height: 180px;
+}
+
+.dotted {
+    border: 2px dashed   #000;
+}
+
+#flightDataForm input {
+    max-width: 75px;
+    border-radius: 5px;
+    line-height: 1.5;
+    padding: 0;
+    text-align: center;
+}
+
+#flightDataForm input[type='date'] {
+    max-width: 100px;
+}
+
+.routeData_button {
+    justify-self: flex-end;
+}
+
+.data_infoData_buttonsContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flightDataContainer_buttons {
+    height: max-content;
+    display: flex;
+}
+
+.flightDataSub {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    padding: 0px 0 10px 10px;
+}
+
+.flightDataSub label {
+    padding: 5px 0 0px 0;
+    width: fit-content;
+}
+
+.flightDataSub input {
+    padding: 0 0 3px 0;
+}
+
+.flightData_button {
+    margin-top: 10px;
+    padding: 0 10px;
+    max-width: 100px;
+    justify-self: flex-end;
+    align-self: flex-end;
+    font-size: 10px;
+}
+
+.mainButtons {
+    margin-top: 0;
+    max-width: none;
+    width: 100%;
+    padding: 10px;
+    height: max-content;
+    font-size: 14px;
+    font-weight: bolder;
+}
+
+.infoData_button {
+    margin-top: 0;
+    border-radius: 0 0 5px 5px;
+    padding: 3px 10px;
+}
+
+.warning {
+    position: absolute;
+    right: 0;
+    width: 25px;
+    max-width: 30px;
+    color: yellow;
+}
+
+/* блок карты */
+.mainMapContainer {
+    display: flex;
+    align-items: stretch;
+    flex: 4 4 60%;
+}
+
+.mainMapContainer_mapContainer {
+    display: flex;
+    flex-grow: 1;
+}
+
+.ymaps-2-1-79-map {
+/* max-width: 100; */
+    max-height: 100%;
+}
+
+.mainMapContainer_toolsContainer {
+    width: 50px;
+    border-left: 1px solid black;
+}
+
+/* доп классы */
+
+.display-flex {
+    display: flex;
+}
+
+.maxW-60 {
+    max-width: 60%;
+}
