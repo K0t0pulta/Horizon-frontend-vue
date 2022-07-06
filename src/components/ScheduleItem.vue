@@ -20,14 +20,6 @@ defineProps<{
 	flight: Record<string, unknown>,
 }>();
 
-// function doFillForm(someFlight: Record<string, unknown>) {
-// const form = document.forms.flightDataForm.elements;
-// for (let i = 0; i < form.length; i += 1) {
-// if (form[i].id === '') i += 1;
-// form[i].value = someFlight[form[i].id];
-// }
-// }
-
 const emit = defineEmits<{(event: 'flightRecall', flight: object, isActive: boolean): void}>();
 
 </script>

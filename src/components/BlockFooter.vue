@@ -6,7 +6,7 @@
 import { defineProps, ref, watch } from 'vue';
 
 const props = defineProps<{
-    connectionStatus: string,
+    connectionStatus: string | undefined,
 }>();
 const isWarning = ref(false);
 watch(() => props.connectionStatus, (newValue) => {

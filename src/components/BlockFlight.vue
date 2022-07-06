@@ -39,23 +39,35 @@
 						</select>
 					</label>
 					<div class="formSorter">
-						<label for="departure">DEP
-							<input class="flightData_input" type="text" name="departure"
-							id="departure" list="departureList" v-model="departure" required
-							:class="{empty: !departure}">
-						</label>
-						<datalist id="departureList"></datalist>
-						<label for="arrival">ARR
-							<input class="flightData_input" type="text" name="arrival"
-							id="arrival" list="arrivalList" v-model="arrival" required :class="{empty: !arrival}">
-						</label>
-						<datalist id="arrivalList"></datalist>
+						<div>
+
+							<label for="departure">DEP
+								<input class="flightData_input" type="text" name="departure" autocomplete="off"
+								id="departure" v-model="departure" required
+								:class="{empty: !departure}">
+								{{choosenDeparture.name}}
+							</label>
+						</div>
+						<div>
+							<label for="arrival">ARR
+								<input class="flightData_input" type="text" name="arrival" autocomplete="off"
+								id="arrival" v-model="arrival" required :class="{empty: !arrival}">
+								{{choosenArrival.name}}
+							</label>
+
+						</div>
+						<div>
+							<span v-show="Object.keys(choosenDeparture).length && Object.keys(choosenArrival).length">
+							GreatCircleDist</span>
+
+						</div>
 					</div>
 				</fieldset>
 				<fieldset class="data_otherData flightDataSub">
 					<button @click.prevent="addAlternateAirport">Добавить запасной аэродром</button>
 					<label for="altn1">ALTN 1
 						<input class="flightData_input" type="text" name="altn1" id="altn1"
+						autocomplete="off" autocapitalize="on"
 						v-model="altn1">
 					</label>
 					<label for="speed">SPEED
@@ -72,10 +84,10 @@
 				<fieldset class="data_massData flightDataSub">
 					<label for="dryOperationWeight">DOW
 						<input class="flightData_input" type="number" name="dryOperationWeight" id="dryOperationWeight"
-						v-model="dryOperationWeight">
+						v-model.number="dryOperationWeight">
 					</label>
 					<label for="payload">PLD
-						<input class="flightData_input" name="payload" id="payload"
+						<input class="flightData_input" type="number" name="payload" id="payload" min="0"
 						v-model.number="payload">
 					</label>
 					<div class="formSorter">
@@ -193,10 +205,14 @@ import {
 import schdeduleListStore from '@/stores/schdeduleListStore';
 import AircraftsStore from '@/stores/AircraftsStore';
 import AirlineStore from '@/stores/AirlineStore';
+// import airportRequest from '@/composables/airportRequest';
+import Client from '@/composables/websocket';
 
 const airlineData = AirlineStore();
 const aircraftList = AircraftsStore().aircrafts;
 const flightList = schdeduleListStore().list;
+const choosenDeparture = reactive({});
+const choosenArrival = reactive({});
 
 // eslint-disable-next-line no-undef
 const props = defineProps({
@@ -212,7 +228,7 @@ const {
 	flightId = ref(), dateOfFlight = ref(''), eobt = ref(''), regNumber = ref('выберите ВС'),
 	departure = ref(''), arrival = ref(''), altn1 = ref(''),
 	speed = ref(''), maxFlightLevel = ref<number|string>(''), payload = ref(0),
-	dryOperationWeight = ref<number|string>(''), maxZerofuelWeight = ref<number|string>(''),
+	dryOperationWeight = ref<number>(0), maxZerofuelWeight = ref<number|string>(''),
 	maxTakeoffWeight = ref<number|string>(''), estTakeoffWeight = ref<number|string>(''),
 	estLandingWeight = ref<number|string>(''), maxLandingWeight = ref<number|string>(''),
 	taxiOut = ref(airlineData.taxiOut), taxiIn = ref(airlineData.taxiIn), hold = ref(airlineData.hold),
@@ -233,9 +249,32 @@ watch(regNumber, (newValue: string) => {
 	maxTakeoffWeight.value = activeAircraft.maxTakeoffWeight;
 });
 
-const estZeroFuelWeight = computed(() => dryOperationWeight.value + payload.value);
+const estZeroFuelWeight = computed(() => Number(dryOperationWeight.value) + Number(payload.value));
 
 const warning = ref(false);
+
+watch(departure, (newValue) => {
+	if (newValue.length > 2) {
+		Client.sendAirport(newValue);
+	}
+	// Client.socket.onmessage = (message) => {
+	// 	departureList.value = JSON.parse(message.data);
+	// 	console.log(message);
+	// 	console.log(departureList.value);
+	// };
+	// console.log(
+	Client.response((el) => {
+		Object.assign(choosenDeparture, el);
+	});
+});
+watch(arrival, (newValue) => {
+	if (newValue.length > 2) {
+		Client.sendAirport(newValue);
+	}
+	Client.response((el) => {
+		Object.assign(choosenArrival, el);
+	});
+});
 
 // собираем все значения input из формы  как объект и сохраняем в массив
 function saveFlight(id: number) {
@@ -284,5 +323,9 @@ left: -200%
 	margin: 3px 0;
 	display: flex;
 	justify-content: space-around;
+}
+
+input[type='text']{
+	text-transform: uppercase;
 }
 </style>
