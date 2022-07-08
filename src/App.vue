@@ -7,14 +7,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import BlockHeader from './components/BlockHeader.vue';
 import BlockFooter from './components/BlockFooter.vue';
+import AircraftsStore from './stores/AircraftsStore';
 import Client from './composables/websocket';
 
 const connectionStatus = ref<string | undefined>('');
 Client.init((el) => {
 	connectionStatus.value = el;
+});
+
+watch(connectionStatus, (status) => {
+	if (status === 'Online') {
+		Client.requestAircraftsList((list) => {
+			AircraftsStore().aircrafts = list;
+		});
+	}
 });
 
 </script>

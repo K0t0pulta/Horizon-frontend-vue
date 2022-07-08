@@ -12,17 +12,46 @@ class ApiClient {
 		this.socket.onerror = (event) => { callback(`Some error: ${event.type}`); };
 	}
 
-	sendAirport(request: string) {
-		if (request.length < 3) return;
-		const requestUpper = request.toUpperCase();
+	requestAircraftsList(callback: (arg0: any) => void) {
+		const request = {
+			type: 'requestAircrafts',
+		};
+		this.socket.send(JSON.stringify(request));
+		this.socket.onmessage = (message) => {
+			const response = JSON.parse(message.data);
+			if (response.length > 0) {
+				const result = response;
+				console.log(result);
+				callback(result);
+			}
+		};
+	}
+
+	sendAirport(airportCode: string, airportType: string, callback: (arg0: any) => void) {
+		if (airportCode.length < 3) return;
+		const requestUpper = airportCode.toUpperCase();
 		const searchRequest = {
 			type: 'search',
 			data: requestUpper,
 		};
 		this.socket.send(JSON.stringify(searchRequest));
+		this.socket.onmessage = (message) => {
+			const response = JSON.parse(message.data);
+			if (response.length > 0) {
+				const airport = { ...response[0] };
+				const result = [airport, `for: ${airportType}`];
+				console.log(result);
+				callback(result);
+			}
+		};
 	}
 
-	response(callback: (arg0: any) => void) {
+	sendAircraft(msn: string, callback: (arg0: string | number) => void) {
+		const searchRequest = {
+			type: 'search',
+			data: msn,
+		};
+		this.socket.send(JSON.stringify(searchRequest));
 		this.socket.onmessage = (message) => {
 			const response = JSON.parse(message.data);
 			if (response.length > 0) {
@@ -31,6 +60,16 @@ class ApiClient {
 			}
 		};
 	}
+
+	// response(callback: (arg0: object) => void) {
+	// 	this.socket.onmessage = (message) => {
+	// 		const response = JSON.parse(message.data);
+	// 		if (response.length > 0) {
+	// 			const result = { ...response[0] };
+	// 			callback(result);
+	// 		}
+	// 	};
+	// }
 }
 
 let instance = null;
