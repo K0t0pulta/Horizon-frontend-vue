@@ -63,7 +63,7 @@
 					</div>
 				</fieldset>
 				<fieldset class="data_otherData flightDataSub">
-					<button @click.prevent="addAlternateAirport">Добавить запасной аэродром</button>
+					<button @click.prevent="">Добавить запасной аэродром</button>
 					<div class="formSorter">
 						<label for="altn1">ALTN 1
 							<input class="flightData_input" type="text" name="altn1" id="altn1"
@@ -96,7 +96,7 @@
 						<label for="estZeroFuelWeight">EZFW
 							<input class="flightData_input" name="estZeroFuelWeight" id="estZeroFuelWeight"
 							v-model.number="flightData.estZeroFuelWeight" autocomplete="off"
-							:placeholder="estZeroFuelWeightComputed">
+							:placeholder="String(estZeroFuelWeightComputed)">
 						</label>
 						<label for="maxZerofuelWeight">MZFW
 							<input class="flightData_input" type="number"
@@ -191,7 +191,7 @@
 				</div>
 			<div class="flightDataContainer_buttons">
 				<button class="flightData_button mainButtons basicButtonColors" id="button-save"
-				form="flightDataForm" type="button" @click="saveFlight(props.activeFlightId)" >СОХРАНИТЬ</button>
+				form="flightDataForm" type="button" @click="saveFlight(choosenFlightId)" >СОХРАНИТЬ</button>
 				<button class="flightData_button mainButtons basicButtonColors"
 				id="button-compute" form="flightDataForm" formtarget="_blank" :disabled="warning">
 					РАССЧИТАТЬ
@@ -203,7 +203,7 @@
 
 <script setup lang="ts">
 import {
-	ref, watch, computed, toRef, toRefs, reactive, watchEffect,
+	ref, watch, computed, toRef, reactive, watchEffect,
 } from 'vue';
 import schdeduleListStore from '@/stores/schdeduleListStore';
 import AircraftsStore from '@/stores/AircraftsStore';
@@ -211,24 +211,27 @@ import AirlineStore from '@/stores/AirlineStore';
 // import airportRequest from '@/composables/airportRequest';
 import Client from '@/composables/websocket';
 import greatCircleCalculator from '@/composables/greatCircleCalculator';
+import { IFlight } from '@/interfaces/flight';
+import { IAircraft } from '@/interfaces/aircraft';
+import { IAirport } from '@/interfaces/airport';
 
 const airlineData = AirlineStore();
-const aircraftList = AircraftsStore().aircrafts;
-const flightList = schdeduleListStore().list;
-const choosenDeparture = reactive({});
-const choosenArrival = reactive({});
-const choosenAltn1 = reactive({});
+const aircraftList: IAircraft[] = AircraftsStore().aircrafts;
+const flightList: IFlight[] = schdeduleListStore().list;
+const choosenDeparture = reactive({}) as IAirport;
+const choosenArrival = reactive({}) as IAirport;
+const choosenAltn1 = reactive({}) as IAirport;
 const warning = ref(false);
 
 // eslint-disable-next-line no-undef
 const props = defineProps({
 	activeFlight: Object,
-	activeFlightId: Number,
+	activeFlightId: { type: Number, required: true },
 });
 
 const choosenFlightId = toRef(props, 'activeFlightId');
 // eslint-disable-next-line vue/no-setup-props-destructure
-const { ...choosenFlight } = props.activeFlight;
+const { ...choosenFlight } = props.activeFlight as IFlight;
 const emptyFlightData = reactive({
 	id: 0,
 	flightId: '',
@@ -239,15 +242,15 @@ const emptyFlightData = reactive({
 	arrival: '',
 	altn1: '',
 	speed: '',
-	maxFlightLevel: '',
+	maxFlightLevel: 0,
 	payload: 0,
 	dryOperationWeight: 0,
-	maxZeroFuelWeight: Number,
-	maxTakeoffWeight: Number,
-	maxLandingWeight: Number,
+	maxZeroFuelWeight: 0,
+	maxTakeoffWeight: 0,
+	maxLandingWeight: 0,
 	estZeroFuelWeight: '',
-	estTakeoffWeight: Number,
-	estLandingWeight: Number,
+	estTakeoffWeight: 0,
+	estLandingWeight: 0,
 	taxiOut: airlineData.taxiOut,
 	taxiIn: airlineData.taxiIn,
 	hold: airlineData.hold,
@@ -258,9 +261,9 @@ const emptyFlightData = reactive({
 	blockFuel: 0,
 	landingFuel: 0,
 	tankeringFuel: false,
-});
+}) as unknown as IFlight;
 
-let flightData = reactive({});
+let flightData = reactive({}) as IFlight;
 if (props.activeFlightId === 0) {
 	flightData = emptyFlightData;
 } else {
@@ -272,7 +275,7 @@ const estZeroFuelWeightComputed = computed(() => flightData.dryOperationWeight +
 // заполняем форму либо исходными значениями, либо данными из полученной формы
 
 // отслеживаем изменение ВС и при необходимости переписываем соответсвующие переменные
-const activeAircraft = reactive({});
+const activeAircraft = reactive({}) as IAircraft;
 watch(
 	() => flightData.regNumber,
 	(regNumber) => {
@@ -290,21 +293,18 @@ watchEffect(
 	() => {
 		if (flightData.departure.length > 2) {
 			Client.sendAirport(flightData.departure, 'departure', (el) => {
-				console.log('departure send');
-				Object.assign(choosenDeparture, el);
+				console.log(el);
+				if (el[0] === 'departure') Object.assign(choosenDeparture, el[1]);
 			});
 		}
 	},
-	// Client.response((el) => {
-	// 	Object.assign(choosenDeparture, el);
-	// });
 );
 
 watchEffect(
 	() => {
 		if (flightData.arrival.length > 2) {
 			Client.sendAirport(flightData.arrival, 'arrival', (el) => {
-				Object.assign(choosenDeparture, el);
+				if (el[0] === 'arrival') Object.assign(choosenArrival, el[1]);
 			});
 		}
 	},
@@ -314,7 +314,7 @@ watchEffect(
 	() => {
 		if (flightData.altn1.length > 2) {
 			Client.sendAirport(flightData.altn1, 'altn1', (el) => {
-				Object.assign(choosenAltn1, el);
+				if (el[0] === 'altn1') Object.assign(choosenAltn1, el[1]);
 			});
 		}
 	},
@@ -332,7 +332,7 @@ function saveFlight(id: number) {
 		savedFlight.id = Date.now();
 		flightList.push(savedFlight);
 	} else {
-		const element = flightList.find((el) => el.id === id);
+		const element = flightList.find((el) => el.id === id) as IFlight;
 		flightList.splice(flightList.indexOf(element), 1, savedFlight);
 	}
 }
