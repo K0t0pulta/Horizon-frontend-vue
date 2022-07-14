@@ -13,13 +13,14 @@
 import { ref } from 'vue';
 import BlockSchedule from '@/components/BlockSchedule.vue';
 import BlockFlight from '@/components/BlockFlight.vue';
+import { IFlight } from '@/interfaces/flight';
 
 const isActive = ref(false);
 const choosenFlight = ref({});
 const choosenFlightId = ref(0);
-function activator(flight: object, status:boolean) {
+function activator(flight: IFlight | 0, status:boolean) {
 	choosenFlight.value = flight;
-	choosenFlightId.value = flight.id;
+	choosenFlightId.value = flight === 0 ? 0 : flight.id;
 	isActive.value = status;
 }
 

@@ -13,13 +13,14 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue';
 import AirlineStore from '@/stores/AirlineStore';
+import { IFlight } from '@/interfaces/flight';
 
 const airlineData = AirlineStore();
 
 defineProps<{
-	flight: Record<string, unknown>,
+	flight: IFlight,
 }>();
 
-const emit = defineEmits<{(event: 'flightRecall', flight: object, isActive: boolean): void}>();
+const emit = defineEmits<{(event: 'flightRecall', flight: IFlight, isActive: boolean): void}>();
 
 </script>

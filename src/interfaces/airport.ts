@@ -1,0 +1,42 @@
+export interface IAirport {
+	AS: null
+appl: string
+arptident: string
+asicao: null
+asident: null
+contcycle: string
+contnumber: string
+contnumber2: string
+contrecordnumber: string
+cycle: string
+date: null
+datum: string
+daytime: string
+elevation: string
+fir: string
+iatacode: string
+icaocode: string
+ifr: string
+latitude: string
+longestrwy: string
+longitude: string
+longrwy: string
+magvar: string
+mt: string
+name: string
+pubmil: string
+recordnumber: string
+recordtype: string
+region: string
+se: null
+sectioncode: string
+speedlimit: null
+speedlimitaltitude: string
+subcode: string
+timezone: string
+transaltitude: string
+translevel: null
+uir: null
+vhf: string
+vhficaocode: string
+}

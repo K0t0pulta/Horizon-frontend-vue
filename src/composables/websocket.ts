@@ -12,7 +12,7 @@ class ApiClient {
 		this.socket.onerror = (event) => { callback(`Some error: ${event.type}`); };
 	}
 
-	requestAircraftsList(callback: (arg0: any) => void) {
+	requestAircraftsList(callback: (arg0: unknown[]) => void) {
 		const request = {
 			type: 'requestAircrafts',
 		};
@@ -27,7 +27,7 @@ class ApiClient {
 		};
 	}
 
-	sendAirport(airportCode: string, airportType: string, callback: (arg0: any) => void) {
+	sendAirport(airportCode: string, airportType: string, callback: (arg0: unknown[]) => void) {
 		if (airportCode.length < 3) return;
 		const requestUpper = airportCode.toUpperCase();
 		const searchRequest = {
@@ -39,7 +39,7 @@ class ApiClient {
 			const response = JSON.parse(message.data);
 			if (response.length > 0) {
 				const airport = { ...response[0] };
-				const result = [airport, `for: ${airportType}`];
+				const result = [`${airportType}`, airport];
 				console.log(result);
 				callback(result);
 			}
@@ -60,16 +60,6 @@ class ApiClient {
 			}
 		};
 	}
-
-	// response(callback: (arg0: object) => void) {
-	// 	this.socket.onmessage = (message) => {
-	// 		const response = JSON.parse(message.data);
-	// 		if (response.length > 0) {
-	// 			const result = { ...response[0] };
-	// 			callback(result);
-	// 		}
-	// 	};
-	// }
 }
 
 let instance = null;

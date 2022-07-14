@@ -1,3 +1,5 @@
+import { IAirport } from '@/interfaces/airport';
+
 function gcDist(a1: number, b1: number, a2: number, b2: number) : number {
 	const D = Math.acos(Math.sin(a1) * Math.sin(a2) + Math.cos(a1) * Math.cos(a2) * Math.cos(b2 - b1));
 	return Number((D * 6372.795).toFixed(1));
@@ -19,7 +21,7 @@ function longConvertor(vRaw :string) {
 	return grad;
 }
 
-export default function greatCircleCalculator(obj1: any, obj2: any) {
+export default function greatCircleCalculator(obj1: IAirport, obj2: IAirport) {
 	const { latitude: a1raw, longitude: b1raw } = obj1;
 	const { latitude: a2raw, longitude: b2raw } = obj2;
 	const a1 = latConvertor(a1raw);
