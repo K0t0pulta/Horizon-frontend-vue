@@ -42,7 +42,10 @@
 			</router-link>
 		</nav>
 		<div class="exitContainer">
-			<i class="fa-solid fa-door-open"></i>
+				<router-link :to="{name: 'Login'}">
+					<i class="fa-solid fa-door-open" aria-valuetext="выход">
+				</i>
+				</router-link>
 		</div>
 	</header>
 </template>
