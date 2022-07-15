@@ -3,8 +3,9 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
+// eslint-disable-next-line no-undef
 const props = defineProps<{
     connectionStatus: string | undefined,
 }>();

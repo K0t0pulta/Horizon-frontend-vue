@@ -6,10 +6,10 @@
 }
 
 :root {
-    --first-bg-color: #A3AFDA;
-    --second-bg-color: #ECFDFF;
-    --main-button-color: #3EDBF0;
-    --header-bg-color: #FEFE85;
+    --main-color: #429ee5;
+    --second-color: #A3AFDA;
+    --second-bg-color: #eaf3f7;
+    --main-button-color: #90b8d7;
 }
 
 body {
@@ -29,13 +29,14 @@ a {
 
 button {
     word-wrap: break-word;
-    background-color: var(--main-button-color);
+    background-color: var(--main-color);
     filter: drop-shadow(2px 4px 4px rgba(0, 0, 0, 0.55));
+    font-weight: 600;
     cursor: pointer;
 }
 
 .basicButtonColors:hover {
-    background-color: var(--first-bg-color);
+    background-color: var(--main-color);
 }
 
 /*ШАПКА САЙТА*/
@@ -56,7 +57,7 @@ header {
     align-items: stretch;
     width: 100%;
     height: 6vh;
-    background-color: var(--first-bg-color);
+    background-color: var(--second-color);
 }
 
 
@@ -93,7 +94,7 @@ header {
     padding-right: 10px;
     padding-left: 10px;
     box-shadow: 0px 6px 6px 0px #0000008C;
-    background: linear-gradient(180deg, #3EDBF0 0%, rgba(62, 219, 240, 0) 100%);
+    background: linear-gradient(180deg, var(--main-color) 0%, rgba(62, 219, 240, 0) 100%);
     cursor: pointer;
 }
 
@@ -120,7 +121,7 @@ header {
     border-right: 1px solid black;
     padding-left: 10px;
     padding-right: 10px;
-    background-color: #FEFE85;
+    background-color: var(--main-color);
 }
 
 
@@ -161,7 +162,7 @@ header {
     /* padding-right: 10px; */
     padding-top: 5px;
     padding-bottom: 5px;
-    background-color: var(--header-bg-color);
+    background-color: var(--second-color);
 }
 
 .sheduleContainer_header_title {
@@ -210,7 +211,7 @@ header {
 .scheduleContainer_buttons {
     display: flex;
     justify-content: space-between;
-    background-color: #ECFDFF;
+    background-color: var(--second-bg-color);
 }
 
 .scheduleButton {
@@ -243,7 +244,7 @@ header {
     padding-top: 10px;
     padding-bottom: 10px;
     padding-left: 20px;
-    background-color: #ECFDFF;
+    background-color: var(--second-bg-color);
     overflow-y: scroll;
 }
 
@@ -307,7 +308,7 @@ header {
     padding-right: 10px;
     padding-bottom: 2px;
     padding-left: 10px;
-    background-color: var(--header-bg-color);
+    background-color: var(--second-color);
 }
 
 .flightDataContainer_header_cross {
@@ -321,18 +322,16 @@ header {
 }
 
 .flightDataContainer_units {
-    padding-top: 2px;
     padding-bottom: 2px;
     padding-left: 10px;
     font-size: 0.7rem;
-    background-color: var(--first-bg-color);
+    background-color: var(--second-color);
 }
 
 .flightDataContainer_data {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
-    padding-top: 10px;
     max-height: 100%;
 }
 
@@ -340,10 +339,6 @@ header {
     position: relative;
     padding-bottom: 20px;
 }
-
-/* .data_fuelData {
-    max-height: 180px;
-} */
 
 .data_infoData {
     flex-grow: 5;

@@ -7,42 +7,65 @@ import Permissions from '@/views/PermissionsView.vue';
 import Analytics from '@/views/AnalyticsView.vue';
 import DbAirline from '@/views/DbAirlineView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
+import Login from '@/views/LoginPageView.vue';
+import Home from '@/views/HomePageView.vue';
 
 const routes: Array<RouteRecordRaw> = [
 	{
-		name: 'Main',
 		path: '/',
-		component: MainView,
+		redirect: { name: 'Login' },
 	},
 	{
-		name: 'Aircrafts',
-		path: '/database/aircrafts',
-		component: DbAircarfts,
+		name: 'Login',
+		path: '/login',
+		component: Login,
 	},
 	{
-		name: 'Routes',
-		path: '/database/routes',
-		component: DbRoutes,
-	},
-	{
-		name: 'CoNotams',
-		path: '/database/notams',
-		component: CoNotams,
-	},
-	{
-		name: 'Permissions',
-		path: '/database/permissions',
-		component: Permissions,
-	},
-	{
-		name: 'Analytics',
-		path: '/database/analytics',
-		component: Analytics,
-	},
-	{
-		name: 'Airline',
-		path: '/database/airline',
-		component: DbAirline,
+		name: 'Home',
+		path: '/home',
+		component: Home,
+		children: [
+			{
+				name: 'Main',
+				path: '',
+				component: MainView,
+			},
+			{
+				name: 'Aircrafts',
+				path: 'aircrafts',
+				component: DbAircarfts,
+			},
+			{
+				name: 'Routes',
+				path: 'routes',
+				component: DbRoutes,
+			},
+			{
+				name: 'CoNotams',
+				path: 'notams',
+				component: CoNotams,
+			},
+			{
+				name: 'Permissions',
+				path: 'permissions',
+				component: Permissions,
+			},
+			{
+				name: 'Analytics',
+				path: 'analytics',
+				component: Analytics,
+			},
+			{
+				name: 'Airline',
+				path: 'airline',
+				component: DbAirline,
+			},
+			{
+				path: '/:pathMatch(.*)*',
+				name: 'NotFound',
+				component: NotFoundView,
+			},
+		],
 	},
 	{
 		path: '/:pathMatch(.*)*',

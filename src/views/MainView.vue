@@ -18,9 +18,9 @@ import { IFlight } from '@/interfaces/flight';
 const isActive = ref(false);
 const choosenFlight = ref({});
 const choosenFlightId = ref(0);
-function activator(flight: IFlight | 0, status:boolean) {
+function activator(flight: IFlight, status:boolean) {
 	choosenFlight.value = flight;
-	choosenFlightId.value = flight === 0 ? 0 : flight.id;
+	choosenFlightId.value = Object.keys(flight).length === 0 ? 0 : flight.id;
 	isActive.value = status;
 }
 

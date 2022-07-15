@@ -6,7 +6,7 @@ class ApiClient {
 	status: string | undefined;
 
 	init(callback: (arg0: string) => void) {
-		this.socket = new WebSocket('ws://127.0.0.1:8082');
+		this.socket = new WebSocket('wss://127.0.0.1:8082');
 		this.socket.onopen = () => { callback('Online'); };
 		this.socket.onclose = () => { callback('Offline'); };
 		this.socket.onerror = (event) => { callback(`Some error: ${event.type}`); };

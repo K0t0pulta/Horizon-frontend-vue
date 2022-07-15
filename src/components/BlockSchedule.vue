@@ -22,7 +22,8 @@
 		</div>
 			<div class="scheduleContainer_buttons">
 					<button class="addFlight scheduleButton basicButtonColors"
-					id="addFlightButton" @click.prevent="emit('flightRecall', 0, true)">Добавить рейс</button>
+					id="addFlightButton" @click.prevent="emit('flightRecall', {} as IFlight, true)">
+					Добавить рейс</button>
 					<button class="updateSchedule scheduleButton basicButtonColors"
 					id="updateFlightButton"><i class="fa-solid fa-arrows-rotate"></i></button>
 					<button class="deleteFlight scheduleButton basicButtonColors"
@@ -38,14 +39,14 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits } from 'vue';
 import ScheduleItem from '@/components/ScheduleItem.vue';
 import schdeduleListStore from '@/stores/schdeduleListStore';
 import { IFlight } from '@/interfaces/flight';
 
 const scheduleList: IFlight[] = schdeduleListStore().list;
 
+// eslint-disable-next-line no-undef
 const emit = defineEmits<{(event: 'activateBlockFlight', isActive: boolean): void,
-	(event: 'flightRecall', flight: IFlight | 0, isActive: boolean): void
+	(event: 'flightRecall', flight: IFlight, isActive: boolean): void
 	}>();
 </script>
