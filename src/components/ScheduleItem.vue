@@ -25,3 +25,9 @@ defineProps<{
 const emit = defineEmits<{(event: 'flightRecall', flight: IFlight, isActive: boolean): void}>();
 
 </script>
+
+<style scoped>
+li {
+	margin-left: 0;
+}
+</style>

@@ -1,8 +1,8 @@
 export interface IFlight {
 	id: number,
 	flightId: string,
-	dateOfFlight: Date,
-	eobt: Date,
+	dateOfFlight: string,
+	eobt: string,
 	regNumber: string,
 	departure: string,
 	arrival: string,

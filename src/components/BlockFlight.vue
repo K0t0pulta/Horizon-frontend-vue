@@ -1,13 +1,12 @@
 <template>
 	<section class="flightDataContainer">
 		<div class="flightDataContainer_header">
-			<span class="flightDataContainer_header_flightNumber"></span>
+			<span>ЕДИНИЦЫ ИЗМЕРЕНИЙ: KG, MPH, NM</span>
 			<span class="flightDataContainer_header_cross">
-				<i class="fa-solid fa-xmark" @click="closeBlock"
+				<font-awesome-icon icon="fa-solid fa-xmark" @click="closeBlock"
 				@keypress.space="closeBlock"/>
 			</span>
 		</div>
-		<div class="flightDataContainer_units">ЕДИНИЦЫ ИЗМЕРЕНИЙ: KG, MPH, NM</div>
 		<div class="flightDataContainer_data">
 			<form action="" method="post" id="flightDataForm" name="flightDataForm">
 				<fieldset class="data_routeData flightDataSub">
@@ -16,7 +15,8 @@
 					</span>
 					<label for="flightID">FLIGHT {{airlineData.code}}
 						<input class="flightData_input" type="text" name="flightId" id="flightId"
-						maxlength="4" v-model="flightData.flightId" :class="{empty: !flightData.flightId}">
+						maxlength="4" v-model="flightData.flightId" :class="{empty: !flightData.flightId}"
+						@keydown="inputLettersNumbers">
 					</label>
 					<div class="formSorter">
 						<label for="dateOfFlight">DATE
@@ -29,30 +29,30 @@
 							v-model="flightData.eobt" :class="{empty: !flightData.eobt}">
 						</label>
 					</div>
-					<label for="regNumber">REG
-						<select id="regNumber" name="regNumber" class="flightData_input"
-						v-model="flightData.regNumber" required
-						:class="{empty: flightData.regNumber === 'выберите ВС'}">
-							<option value="выберите ВС" disabled selected hidden>выберите ВС</option>
-							<option v-for="aircraft in aircraftList" :value="aircraft.registration"
-							:key="aircraft.msn">{{ aircraft.registration }}</option>
-						</select>
-					</label>
-					<div class="formSorter column">
-						<div>
-
+					<div class="formSorter">
+						<label for="regNumber">REG
+							<select id="regNumber" name="regNumber" class="flightData_input"
+							v-model="flightData.regNumber" required
+							:class="{empty: flightData.regNumber === 'выберите ВС'}">
+								<option value="выберите ВС" disabled selected hidden>выберите ВС</option>
+								<option v-for="aircraft in aircraftList" :value="aircraft.registration"
+								:key="aircraft.msn">{{ aircraft.registration }}</option>
+							</select>
+						</label>
+					</div>
+						<div class="formSorter">
 							<label for="departure">DEP
 								<input class="flightData_input" type="text" name="departure" autocomplete="off"
-								id="departure" v-model="flightData.departure" required autocapitalize="character"
-								:class="{empty: !flightData.departure}">
+								id="departure" v-model="flightData.departure" required minlength="3" maxlength="4"
+								:class="{empty: !flightData.departure}"	@keydown="inputOnlyLetters">
 								{{choosenDeparture.name}}
 							</label>
 						</div>
-						<div>
+						<div class="formSorter">
 							<label for="arrival">ARR
 								<input class="flightData_input" type="text" name="arrival" autocomplete="off"
-								id="arrival" v-model="flightData.arrival" required
-								:class="{empty: !flightData.arrival}">
+								id="arrival" v-model="flightData.arrival" required minlength="3" maxlength="4"
+								:class="{empty: !flightData.arrival}" @keydown="inputOnlyLetters">
 								{{choosenArrival.name}}
 							</label>
 						</div>
@@ -60,38 +60,45 @@
 							<span v-show="GreatCircleDistMain > 0">
 							Ортодромическое расстояние: {{GreatCircleDistMain}} км</span>
 						</div>
-					</div>
 				</fieldset>
 				<fieldset class="data_otherData flightDataSub">
 					<button @click.prevent="">Добавить запасной аэродром</button>
 					<div class="formSorter">
 						<label for="altn1">ALTN 1
 							<input class="flightData_input" type="text" name="altn1" id="altn1"
-							autocomplete="off" v-model="flightData.altn1">{{choosenAltn1.name}}
+							autocomplete="off" maxlength="4" v-model="flightData.altn1" @keydown="inputOnlyLetters">
+							{{choosenAltn1.name}}
 						</label>
 						<span v-show="GreatCircleDistAltn1 > 0">
 						Ортодромическое расстояние: {{GreatCircleDistAltn1}} км</span>
 					</div>
-					<label for="speed">SPEED
-						<input class="flightData_input" type="text" name="speed" id="speed"
-						v-model="flightData.speed">
-					</label>
-					<label for="maxFlightLevel">MAX FL
-						<input class="flightData_input" type="text" name="maxFlightLevel" id="maxFlightLevel"
-						v-model="flightData.maxFlightLevel">
-					</label>
+					<div class="formSorter">
+						<label for="speed">SPEED
+							<input class="flightData_input" type="text" name="speed" id="speed"
+							v-model="flightData.speed">
+						</label>
+						<label for="maxFlightLevel">MAX FL
+							<input class="flightData_input" type="text" name="maxFlightLevel" id="maxFlightLevel"
+							v-model="flightData.maxFlightLevel">
+						</label>
+					</div>
 					<button class="flightData_button dotted basicButtonColors"
 					id="flightData_button-enrouteALTN">ЗАПАСНЫЕ ПО МАРШРУТУ</button>
 				</fieldset>
 				<fieldset class="data_massData flightDataSub">
-					<label for="dryOperationWeight">DOW
-						<input class="flightData_input" type="number" name="dryOperationWeight" id="dryOperationWeight"
-						v-model.number="flightData.dryOperationWeight" autocomplete="off">
-					</label>
-					<label for="payload">PLD
-						<input class="flightData_input" type="number" name="payload" id="payload" min="0"
-						v-model.number="flightData.payload" autocomplete="off">
-					</label>
+					<div class="formSorter">
+						<label for="dryOperationWeight">DOW
+							<input class="flightData_input" type="number" name="dryOperationWeight"
+							id="dryOperationWeight"
+							v-model.number="flightData.dryOperationWeight" autocomplete="off">
+						</label>
+					</div>
+					<div class="formSorter">
+						<label for="payload">PLD
+							<input class="flightData_input" type="number" name="payload" id="payload" min="0"
+							v-model.number="flightData.payload" autocomplete="off">
+						</label>
+					</div>
 					<div class="formSorter">
 						<label for="estZeroFuelWeight">EZFW
 							<input class="flightData_input" name="estZeroFuelWeight" id="estZeroFuelWeight"
@@ -127,23 +134,23 @@
 				</fieldset>
 				<fieldset class="data_fuelData flightDataSub">
 					<div class="formSorter">
-						<label for="taxiOut">TAXI OUT
-							<input class="flightData_input" type="number" name="taxiOut" id="taxiOut"
+						<label for="taxiOut">T/OUT
+							<input class="flightData_input thinInput" type="number" name="taxiOut" id="taxiOut"
 							v-model="flightData.taxiOut">
 						</label>
-						<label for="taxiIn">TAXI IN
-							<input class="flightData_input" type="number" name="taxiIn" id="taxiIn"
+						<label for="taxiIn">T/IN
+							<input class="flightData_input thinInput" type="number" name="taxiIn" id="taxiIn"
 							v-model="flightData.taxiIn">
 						</label>
 
-					</div>
-					<div class="formSorter">
 						<label for="hold">HOLD
-							<input class="flightData_input" type="number" name="hold" id="hold"
+							<input class="flightData_input thinInput" type="number" name="hold" id="hold"
 							v-model="flightData.hold">
 						</label>
+					</div>
+					<div class="formSorter">
 						<label for="coningency">CONTINGENCY
-							<input class="flightData_input" type="number" name="coningency"	id="coningency"
+							<input class="flightData_input thinInput" type="number" name="coningency"	id="coningency"
 							v-model="flightData.contingency">
 						</label>
 					</div>
@@ -162,36 +169,46 @@
 						</label>
 					</div>
 					<div class="formSorter">
-						<label for="blockFuel">BLOCK FUEL
+						<label for="blockFuel">BLOCK
 							<input class="flightData_input" type="number" name="blockFuel" id="blockFuel"
 							v-model="flightData.blockFuel">
 						</label>
-						<label for="landingFuel">LANDING FUEL
+						<label for="landingFuel">LANDING
 							<input class="flightData_input" type="number" name="landingFuel" id="landingFuel"
 							v-model="flightData.landingFuel">
 						</label>
 					</div>
-					<label for="tankeringFuel">TANKERING FUEL
+					<label for="tankeringFuel">TANKERING
 						<input class="flightData_input" type="checkbox" name="tankeringFuel" id="tankeringFuel"
 						v-model="flightData.tankeringFuel">
 					</label>
 					<button class="flightData_button dotted basicButtonColors"
 						id="flightData_button-remarks">РЕМАРКИ</button>
+					<div class="data_fuelData_infoData">
+						<label for="infoData_button-info" class="info-bookmark dotted">
+							<font-awesome-icon icon="fa-solid fa-info" />
+							<input type="radio" name="infoData"
+							class="flightData_button infoData_button basicButtonColors"
+							id="infoData_button-info">
+						</label>
+						<label for="infoData_button_wx" class="info-bookmark dotted">
+							<font-awesome-icon icon="fa-solid fa-cloud-sun" />
+							<input type="radio" name="infoData"
+							class="flightData_button infoData_button basicButtonColors"
+							id="infoData_button_wx">
+						</label>
+						<label for="infoData_button-notams" class="info-bookmark dotted">
+							<font-awesome-icon icon="fa-solid fa-n" />
+							<input type="radio" name="infoData"
+							class="flightData_button infoData_button basicButtonColors"
+							id="infoData_button-notams">
+						</label>
+					</div>
 				</fieldset>
 			</form>
-				<div class="data_infoData flightDataSub">
-					<div class="data_infoData_buttonsContainer">
-						<button class="flightData_button infoData_button basicButtonColors"
-						id="infoData_button-info">INFO</button>
-						<button class="flightData_button infoData_button basicButtonColors"
-						id="infoData_button_wx">WX</button>
-						<button class="flightData_button infoData_button basicButtonColors"
-						id="infoData_button-notams">NOTAMS</button>
-					</div>
-				</div>
 			<div class="flightDataContainer_buttons">
 				<button class="flightData_button mainButtons basicButtonColors" id="button-save"
-				form="flightDataForm" type="button" @click="saveFlight(choosenFlightId)" >СОХРАНИТЬ</button>
+				form="flightDataForm" @click.prevent="saveFlight(choosenFlightId)" >СОХРАНИТЬ</button>
 				<button class="flightData_button mainButtons basicButtonColors"
 				id="button-compute" form="flightDataForm" formtarget="_blank" :disabled="warning">
 					РАССЧИТАТЬ
@@ -203,7 +220,7 @@
 
 <script setup lang="ts">
 import {
-	ref, watch, computed, toRef, reactive, watchEffect,
+	ref, watch, computed, reactive, watchEffect,
 } from 'vue';
 import schdeduleListStore from '@/stores/schdeduleListStore';
 import AircraftsStore from '@/stores/AircraftsStore';
@@ -214,6 +231,7 @@ import greatCircleCalculator from '@/composables/greatCircleCalculator';
 import { IFlight } from '@/interfaces/flight';
 import { IAircraft } from '@/interfaces/aircraft';
 import { IAirport } from '@/interfaces/airport';
+import { inputOnlyLetters, inputLettersNumbers } from '@/composables/inputCheckers';
 
 const airlineData = AirlineStore();
 const aircraftList: IAircraft[] = AircraftsStore().aircrafts;
@@ -229,10 +247,11 @@ const props = defineProps({
 	activeFlightId: { type: Number, required: true },
 });
 
-const choosenFlightId = toRef(props, 'activeFlightId');
+// eslint-disable-next-line vue/no-setup-props-destructure
+const choosenFlightId = ref(props.activeFlightId);
 // eslint-disable-next-line vue/no-setup-props-destructure
 const { ...choosenFlight } = props.activeFlight as IFlight;
-const emptyFlightData = reactive({
+const emptyFlightData: IFlight = reactive({
 	id: 0,
 	flightId: '',
 	dateOfFlight: '',
@@ -261,7 +280,7 @@ const emptyFlightData = reactive({
 	blockFuel: 0,
 	landingFuel: 0,
 	tankeringFuel: false,
-}) as unknown as IFlight;
+});
 
 let flightData = reactive({}) as IFlight;
 if (props.activeFlightId === 0) {
@@ -326,11 +345,14 @@ const GreatCircleDistAltn1 = computed(() => greatCircleCalculator(choosenArrival
 
 // собираем все значения input из формы  как объект и сохраняем в массив
 function saveFlight(id: number) {
+	if (!flightData.flightId || !flightData.dateOfFlight || !flightData.eobt
+		|| !flightData.departure || !flightData.arrival) return;
 	// eslint-disable-next-line prefer-object-spread
 	const savedFlight = Object.assign({}, flightData);
 	if (id === 0) {
 		savedFlight.id = Date.now();
 		flightList.push(savedFlight);
+		choosenFlightId.value = savedFlight.id;
 	} else {
 		const element = flightList.find((el) => el.id === id) as IFlight;
 		flightList.splice(flightList.indexOf(element), 1, savedFlight);
@@ -362,12 +384,6 @@ left: -200%
 	border: 2px solid rgb(214, 48, 18);
 }
 
-.formSorter {
-	margin: 3px 0;
-	display: flex;
-	justify-content: space-around;
-}
-
 input[type='text']{
 	text-transform: uppercase;
 }
@@ -383,5 +399,12 @@ input[type='text']{
 }
 #estZeroFuelWeight:focus::placeholder{
 	color: #fff;
+}
+
+.infoData_button {
+	display: none;
+}
+.svg-inline--fa {
+	height: 2em;
 }
 </style>

@@ -51,17 +51,17 @@
 </template>
 
 <script setup lang="ts">
-function dateFormater(value: number) :string {
-	let result = '';
-	if (value + 1 < 10) {
-		result = `${0}${value + 1}`;
-	} else {
-		result = `${value + 1}`;
-	}
-	return result;
-}
+import dateFormater from '@/composables/dateFormater';
+import { ref } from 'vue';
 
-const date = new Date();
-const timeUTC = `${date.getUTCHours()}:${date.getUTCMinutes()}`;
-const dateUTC = `${dateFormater(date.getUTCDate())} ${dateFormater(date.getUTCMonth())}`;
+const timeUTC = ref('');
+const dateUTC = ref('');
+function dateTime() {
+	const date = new Date();
+	timeUTC.value = `${dateFormater(date.getUTCHours())}:${dateFormater(date.getUTCMinutes())}`;
+	dateUTC.value = `${dateFormater(date.getUTCDate())}/${dateFormater(date.getUTCMonth() + 1)}`;
+	return { timeUTC, dateUTC };
+}
+setInterval(dateTime, 1000);
+// const date = new Date();
 </script>

@@ -1,33 +1,37 @@
 <template>
 	<section class="scheduleContainer">
 		<div class="sheduleContainer_header">
-			<div class="sheduleContainer_header_title">Расписание</div>
+			<h3 class="sheduleContainer_header_title">Расписание</h3>
 			<div class="sheduleContainer_header_sorter">
 				<div class="sorter_sortBy">
-						<span>Сортировать по</span>
-						<label for="sortReg">
-							<input type="radio" name="sort" id="sortReg">
+						<span>Сортировать</span>
+						<label for="sortReg" :class="[activeSort === 'sortReg' ? activeClass : inActiveClass]">
+							<input type="radio" name="sort" id="sortReg"
+							value="sortReg" v-model="activeSort"
+							@click="sortByReg(scheduleList)">
 						REG</label>
-						<label for="sortTime">
-							<input type="radio" name="sort" id="sortTime" checked>
+						<label for="sortTime" :class="[activeSort === 'sortTime' ? activeClass : inActiveClass]">
+							<input type="radio" name="sort" id="sortTime"
+							value="sortTime" v-model="activeSort"
+							@click="sortByTime(scheduleList)">
 						TIME</label>
 				</div>
-				<div class="sorter_filter">
-					<label for="dateFrom">период с
-						<input type="date" class="dateFrom" id="dateFrom"><br></label>
+				<div class="sorter_filter formSorter">
+					<label for="dateFrom">Фильтр с
+						<input type="date" class="dateFrom" id="dateFrom" v-model="dateStart"></label>
 					<label for="dateTill">по
-						<input type="date" class="dateTill" id="dateTill"></label>
+						<input type="date" class="dateTill" id="dateTill" v-model="dateEnd"></label>
 				</div>
 			</div>
 		</div>
 			<div class="scheduleContainer_buttons">
 					<button class="addFlight scheduleButton basicButtonColors"
 					id="addFlightButton" @click.prevent="emit('flightRecall', {} as IFlight, true)">
-					Добавить рейс</button>
+					Добавить</button>
 					<button class="updateSchedule scheduleButton basicButtonColors"
 					id="updateFlightButton"><i class="fa-solid fa-arrows-rotate"></i></button>
 					<button class="deleteFlight scheduleButton basicButtonColors"
-					id="deleteFlightButton">Удалить рейс</button>
+					id="deleteFlightButton">Удалить</button>
 			</div>
 			<div class="scheduleContainer_listContainer">
 					<ul class="scheduleContainer_listContainer_list" id="flightList">
@@ -42,11 +46,37 @@
 import ScheduleItem from '@/components/ScheduleItem.vue';
 import schdeduleListStore from '@/stores/schdeduleListStore';
 import { IFlight } from '@/interfaces/flight';
+import sortByTime from '@/composables/sortByTime';
+import sortByReg from '@/composables/sortByReg';
+import { ref } from 'vue';
+import dateFormater from '@/composables/dateFormater';
 
 const scheduleList: IFlight[] = schdeduleListStore().list;
+
+// раздел сортировки
+const activeClass = ref('activeSorter');
+const inActiveClass = ref('inActiveSorter');
+const activeSort = ref('sortTime');
+
+// Раздел фильтрации
+const date = new Date();
+const dateStart = ref('');
+const dateEnd = ref('');
+dateStart.value = `${date.getFullYear()}-${dateFormater(date.getMonth() + 1)}-${dateFormater(date.getDate() - 1)}`;
+dateEnd.value = `${date.getFullYear()}-${dateFormater(date.getMonth() + 1)}-${dateFormater(date.getDate() + 1)}`;
 
 // eslint-disable-next-line no-undef
 const emit = defineEmits<{(event: 'activateBlockFlight', isActive: boolean): void,
 	(event: 'flightRecall', flight: IFlight, isActive: boolean): void
 	}>();
 </script>
+
+<style scoped>
+.activeSorter{
+	box-shadow: none;
+	font-weight: 600;
+}
+.inActiveSorter{
+	box-shadow: inset 5px 6px 15px rgb(0 0 0 / 58%);
+}
+</style>
