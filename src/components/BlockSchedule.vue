@@ -48,11 +48,9 @@ import schdeduleListStore from '@/stores/schdeduleListStore';
 import { IFlight } from '@/interfaces/flight';
 import sortByTime from '@/composables/sortByTime';
 import sortByReg from '@/composables/sortByReg';
-import { ref, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
 import dateFormater from '@/composables/dateFormater';
-import dateBuilder, { dateBuilderFromDate } from '@/composables/dateBuilder';
-
-const scheduleList: IFlight[] = schdeduleListStore().list;
+import dateBuilder, { dateBuilderFromDateStart, dateBuilderFromDateEnd } from '@/composables/dateBuilder';
 
 // раздел сортировки
 const activeClass = ref('activeSorter');
@@ -65,9 +63,17 @@ const dateStart = ref('');
 const dateEnd = ref('');
 dateStart.value = `${date.getFullYear()}-${dateFormater(date.getMonth() + 1)}-${dateFormater(date.getDate() - 1)}`;
 dateEnd.value = `${date.getFullYear()}-${dateFormater(date.getMonth() + 1)}-${dateFormater(date.getDate() + 1)}`;
-watch([dateStart, dateEnd], ([newStart, newEnd]) => scheduleList.filter((flight) => dateBuilder(flight)
-	>= dateBuilderFromDate(newStart) && dateBuilder(flight) <= dateBuilderFromDate(newEnd)));
 
+// формируем список рейсов основываясь на датах фильтрации
+const scheduleList = computed(() => schdeduleListStore().list.filter((flight) => dateBuilder(flight)
+>= dateBuilderFromDateStart(dateStart.value)
+&& dateBuilder(flight) <= dateBuilderFromDateEnd(dateEnd.value)) || []);
+
+// сортируем автоматически при добавлении рейса
+watch(scheduleList, () => {
+	if (activeSort.value === 'sortReg') return console.log(sortByReg(scheduleList.value));
+	return sortByTime(scheduleList.value);
+});
 // eslint-disable-next-line no-undef
 const emit = defineEmits<{(event: 'activateBlockFlight', isActive: boolean): void,
 	(event: 'flightRecall', flight: IFlight, isActive: boolean): void

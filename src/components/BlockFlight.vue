@@ -62,7 +62,7 @@
 						</div>
 				</fieldset>
 				<fieldset class="data_otherData flightDataSub">
-					<button @click.prevent="">Добавить запасной аэродром</button>
+					<button id="flightData_button-addAltn" @click.prevent="">Добавить запасной аэродром</button>
 					<div class="formSorter">
 						<label for="altn1">ALTN 1
 							<input class="flightData_input" type="text" name="altn1" id="altn1"

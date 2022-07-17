@@ -20,12 +20,5 @@ watch(() => props.connectionStatus, (newValue) => {
 </script>
 
 <style scoped>
-footer {
-	padding-left: 10px;
-	font-weight: 600;
-	background-color: rgb(39, 167, 56);
-}
-.isWarning {
-	background-color: rgb(214, 48, 18);
-}
+
 </style>

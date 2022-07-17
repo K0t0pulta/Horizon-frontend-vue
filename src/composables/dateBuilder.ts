@@ -6,8 +6,13 @@ export default function dateBuilder(object: IFlight): number {
 	return newDate.getTime();
 }
 
-export function dateBuilderFromDate(date: string): number {
+export function dateBuilderFromDateStart(date: string): number {
 	const stringDate = `${date}T00:00:00`;
+	const newDate = new Date(stringDate);
+	return newDate.getTime();
+}
+export function dateBuilderFromDateEnd(date: string): number {
+	const stringDate = `${date}T23:59:59`;
 	const newDate = new Date(stringDate);
 	return newDate.getTime();
 }

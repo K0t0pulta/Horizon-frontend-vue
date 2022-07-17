@@ -17,7 +17,7 @@
 			</router-link>
 			<router-link :to="{name: 'Routes'}" custom v-slot="{ href }">
 				<div class="navigation_subDirectory">
-					<a :href="href">БД Маршрутов</a>
+					<a :href="href">Маршруты</a>
 				</div>
 			</router-link>
 			<router-link :to="{name: 'CoNotams'}" custom v-slot="{ href }">
