@@ -48,8 +48,9 @@ import schdeduleListStore from '@/stores/schdeduleListStore';
 import { IFlight } from '@/interfaces/flight';
 import sortByTime from '@/composables/sortByTime';
 import sortByReg from '@/composables/sortByReg';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import dateFormater from '@/composables/dateFormater';
+import dateBuilder, { dateBuilderFromDate } from '@/composables/dateBuilder';
 
 const scheduleList: IFlight[] = schdeduleListStore().list;
 
@@ -64,6 +65,8 @@ const dateStart = ref('');
 const dateEnd = ref('');
 dateStart.value = `${date.getFullYear()}-${dateFormater(date.getMonth() + 1)}-${dateFormater(date.getDate() - 1)}`;
 dateEnd.value = `${date.getFullYear()}-${dateFormater(date.getMonth() + 1)}-${dateFormater(date.getDate() + 1)}`;
+watch([dateStart, dateEnd], ([newStart, newEnd]) => scheduleList.filter((flight) => dateBuilder(flight)
+	>= dateBuilderFromDate(newStart) && dateBuilder(flight) <= dateBuilderFromDate(newEnd)));
 
 // eslint-disable-next-line no-undef
 const emit = defineEmits<{(event: 'activateBlockFlight', isActive: boolean): void,

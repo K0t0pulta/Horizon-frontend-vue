@@ -1,8 +1,8 @@
 <template>
 	<li class="list_flight">
 		<span class="list_flight_flight-data">
-			{{flight.dateOfFlight}} {{flight.eobt}} {{airlineData.code}}
-			{{flight.flightId}} {{flight.departure.toUpperCase()}} {{flight.arrival.toUpperCase()}}
+			{{flight.dateOfFlight}} {{flight.eobt}} {{flight.regNumber}} <br/>
+			{{airlineData.code}} {{flight.flightId}} {{flight.departure.toUpperCase()}} {{flight.arrival.toUpperCase()}}
 		</span>
 		<span class="list_flight_flight_open"
 		@click.prevent="emit('flightRecall', flight, true)"

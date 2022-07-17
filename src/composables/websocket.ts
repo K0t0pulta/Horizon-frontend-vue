@@ -1,4 +1,5 @@
 // export default new WebSocket('ws://127.0.0.1:8082');
+import { IAircraft } from '@/interfaces/aircraft';
 
 class ApiClient {
 	socket!: WebSocket;
@@ -6,13 +7,13 @@ class ApiClient {
 	status: string | undefined;
 
 	init(callback: (arg0: string) => void) {
-		this.socket = new WebSocket('wss://127.0.0.1:8082');
+		this.socket = new WebSocket('ws://localhost:8082');
 		this.socket.onopen = () => { callback('Online'); };
 		this.socket.onclose = () => { callback('Offline'); };
 		this.socket.onerror = (event) => { callback(`Some error: ${event.type}`); };
 	}
 
-	requestAircraftsList(callback: (arg0: unknown[]) => void) {
+	requestAircraftsList(callback: (arg0: IAircraft[]) => void) {
 		const request = {
 			type: 'requestAircrafts',
 		};
