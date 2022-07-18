@@ -229,6 +229,11 @@ header {
     cursor: pointer;
 }
 
+.invertedButton {
+    color: var(--main-color);
+    background-color: #000;
+}
+
 .addFlight {
     border-radius: 0px 0px 10px 0px;
     cursor: pointer;
@@ -282,6 +287,10 @@ header {
     visibility: visible;
     font-size: 20px;
     cursor: pointer;
+}
+
+.list_flight-deleteFlight {
+    margin-right: 5px;
 }
 
 /* блок рейса */
@@ -371,6 +380,11 @@ margin-right: 5px;
 
 #flightDataForm input[type='date'] {
     max-width: 100px;
+}
+
+#flightData_button-enrouteAltn{
+    transform: translateX(-0.5rem);
+
 }
 
 #flightData_button-addAltn {

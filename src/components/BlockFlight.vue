@@ -62,9 +62,10 @@
 						</div>
 				</fieldset>
 				<fieldset class="data_otherData flightDataSub">
-					<button id="flightData_button-addAltn" @click.prevent="">Добавить запасной аэродром</button>
+					<button id="flightData_button-addAltn" @click.prevent="addAltn">Добавить запасной аэродром</button>
 					<div class="formSorter">
-						<label for="altn1">ALTN 1
+						<label for="altn1" v-for="altn of flightData.altnList"
+						:key="flightData.altnList.indexOf(altn)">ALTN {{flightData.altnList.indexOf(altn) + 1}}
 							<input class="flightData_input" type="text" name="altn1" id="altn1"
 							autocomplete="off" maxlength="4" v-model="flightData.altn1" @keydown="inputOnlyLetters">
 							{{choosenAltn1.name}}
@@ -83,7 +84,7 @@
 						</label>
 					</div>
 					<button class="flightData_button dotted basicButtonColors"
-					id="flightData_button-enrouteALTN">ЗАПАСНЫЕ ПО МАРШРУТУ</button>
+					id="flightData_button-enrouteAltn">ЗАПАСНЫЕ ПО МАРШРУТУ</button>
 				</fieldset>
 				<fieldset class="data_massData flightDataSub">
 					<div class="formSorter">
@@ -142,13 +143,12 @@
 							<input class="flightData_input thinInput" type="number" name="taxiIn" id="taxiIn"
 							v-model="flightData.taxiIn">
 						</label>
-
+					</div>
+					<div class="formSorter">
 						<label for="hold">HOLD
 							<input class="flightData_input thinInput" type="number" name="hold" id="hold"
 							v-model="flightData.hold">
 						</label>
-					</div>
-					<div class="formSorter">
 						<label for="coningency">CONTINGENCY
 							<input class="flightData_input thinInput" type="number" name="coningency"	id="coningency"
 							v-model="flightData.contingency">
@@ -260,6 +260,7 @@ const emptyFlightData: IFlight = reactive({
 	departure: '',
 	arrival: '',
 	altn1: '',
+	altnList: ['1', '2'],
 	speed: '',
 	maxFlightLevel: 0,
 	payload: 0,
@@ -358,6 +359,10 @@ function saveFlight(id: number) {
 		flightList.splice(flightList.indexOf(element), 1, savedFlight);
 	}
 }
+
+// function addAltn() {
+
+// }
 
 // eslint-disable-next-line no-undef
 const emit = defineEmits<{(event: 'hideBlock', isActive: boolean): void}>();
