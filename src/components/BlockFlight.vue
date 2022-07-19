@@ -62,16 +62,32 @@
 						</div>
 				</fieldset>
 				<fieldset class="data_otherData flightDataSub">
-					<button id="flightData_button-addAltn" @click.prevent="addAltn">Добавить запасной аэродром</button>
+					<div class="altnButtonsWrapper">
+						<button id="flightData_button-addAltn" @click.prevent="addAltn">+1 запасной</button>
+						<button id="flightData_button-removeAltn" @click.prevent="removeAltn">-1 запасной</button>
+					</div>
 					<div class="formSorter">
-						<label for="altn1" v-for="altn of flightData.altnList"
-						:key="flightData.altnList.indexOf(altn)">ALTN {{flightData.altnList.indexOf(altn) + 1}}
-							<input class="flightData_input" type="text" name="altn1" id="altn1"
-							autocomplete="off" maxlength="4" v-model="flightData.altn1" @keydown="inputOnlyLetters">
-							{{choosenAltn1.name}}
-						</label>
-						<span v-show="GreatCircleDistAltn1 > 0">
-						Ортодромическое расстояние: {{GreatCircleDistAltn1}} км</span>
+						<div class="altnWrapper">
+							<label for="altn1"  v-if="numberAltnToShow >= 1">ALTN 1
+								<input class="flightData_input" type="text" name="altn1" id="altn1"
+								autocomplete="off" maxlength="4" v-model="flightData.altn1" @keydown="inputOnlyLetters">
+								{{choosenAltn1.name}}
+							</label>
+							<span v-show="GreatCircleDistAltn1 > 0">
+							Ортодромическое расстояние: {{GreatCircleDistAltn1}} км</span>
+							<label for="altn2" v-if="numberAltnToShow >= 2">ALTN 2
+								<input class="flightData_input" type="text" name="altn2" id="altn2"
+								autocomplete="off" maxlength="4"
+								v-model="flightData.altn2" @keydown="inputOnlyLetters">
+								{{choosenAltn2.name}}
+							</label>
+							<label for="altn3" v-if="numberAltnToShow === 3">ALTN 3
+								<input class="flightData_input" type="text" name="altn3" id="altn3"
+								autocomplete="off" maxlength="4"
+								v-model="flightData.altn3" @keydown="inputOnlyLetters">
+								{{choosenAltn3.name}}
+							</label>
+						</div>
 					</div>
 					<div class="formSorter">
 						<label for="speed">SPEED
@@ -239,6 +255,8 @@ const flightList: IFlight[] = schdeduleListStore().list;
 const choosenDeparture = reactive({}) as IAirport;
 const choosenArrival = reactive({}) as IAirport;
 const choosenAltn1 = reactive({}) as IAirport;
+const choosenAltn2 = reactive({}) as IAirport;
+const choosenAltn3 = reactive({}) as IAirport;
 const warning = ref(false);
 
 // eslint-disable-next-line no-undef
@@ -260,7 +278,8 @@ const emptyFlightData: IFlight = reactive({
 	departure: '',
 	arrival: '',
 	altn1: '',
-	altnList: ['1', '2'],
+	altn2: '',
+	altn3: '',
 	speed: '',
 	maxFlightLevel: 0,
 	payload: 0,
@@ -339,6 +358,24 @@ watchEffect(
 		}
 	},
 );
+watchEffect(
+	() => {
+		if (flightData.altn2.length > 2) {
+			Client.sendAirport(flightData.altn2, 'altn2', (el) => {
+				if (el[0] === 'altn2') Object.assign(choosenAltn2, el[1]);
+			});
+		}
+	},
+);
+watchEffect(
+	() => {
+		if (flightData.altn3.length > 2) {
+			Client.sendAirport(flightData.altn3, 'altn3', (el) => {
+				if (el[0] === 'altn3') Object.assign(choosenAltn3, el[1]);
+			});
+		}
+	},
+);
 // расчёт ортодромического расстояния между departure/arrival
 const GreatCircleDistMain = computed(() => greatCircleCalculator(choosenDeparture, choosenArrival));
 // расчёт ортодромического расстояния между departure/arrival
@@ -360,9 +397,23 @@ function saveFlight(id: number) {
 	}
 }
 
-// function addAltn() {
-
-// }
+// работа кнопок добавления/удаления запасных
+const numberAltnToShow = ref(1);
+function addAltn() {
+	if (numberAltnToShow.value < 3) {
+		if (numberAltnToShow.value === 0) numberAltnToShow.value += 1;
+		if (flightData.altn1 !== '' && numberAltnToShow.value === 1) numberAltnToShow.value += 1;
+		if (flightData.altn2 !== '' && numberAltnToShow.value === 2) numberAltnToShow.value += 1;
+	}
+}
+function removeAltn() {
+	if (numberAltnToShow.value > 0) {
+		if (numberAltnToShow.value === 1) flightData.altn1 = '';
+		if (numberAltnToShow.value === 2) flightData.altn2 = '';
+		if (numberAltnToShow.value === 3) flightData.altn3 = '';
+		numberAltnToShow.value -= 1;
+	}
+}
 
 // eslint-disable-next-line no-undef
 const emit = defineEmits<{(event: 'hideBlock', isActive: boolean): void}>();
