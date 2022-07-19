@@ -387,11 +387,23 @@ margin-right: 5px;
 
 }
 
-#flightData_button-addAltn {
+#flightData_button-addAltn, 
+#flightData_button-removeAltn{
+    width: 100%;
+}
+
+.altnWrapper {
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+}
+
+.altnButtonsWrapper {
+    display: flex;
     width: calc(100% + 0.5rem);
     transform: translateX(-0.5rem);
-
 }
+
 
 .routeData_button {
     justify-self: flex-end;
@@ -411,7 +423,7 @@ margin-right: 5px;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    padding: 0px 0 10px 0.5rem;
+    padding: 0px 0 5px 0.5rem;
 }
 
 .flightDataSub input {

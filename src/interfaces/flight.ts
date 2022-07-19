@@ -7,7 +7,8 @@ export interface IFlight {
 	departure: string,
 	arrival: string,
 	altn1: string,
-	altnList: string[]
+	altn2: string,
+	altn3: string,
 	speed: string,
 	maxFlightLevel: number,
 	payload: number,
