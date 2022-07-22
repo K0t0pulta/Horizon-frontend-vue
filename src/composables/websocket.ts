@@ -22,7 +22,6 @@ class ApiClient {
 			const response = JSON.parse(message.data);
 			if (response.length > 0) {
 				const result = response;
-				console.log(result);
 				callback(result);
 			}
 		};
@@ -41,7 +40,6 @@ class ApiClient {
 			if (response.length > 0) {
 				const airport = { ...response[0] };
 				const result = [`${airportType}`, airport];
-				console.log(result);
 				callback(result);
 			}
 		};
@@ -57,6 +55,38 @@ class ApiClient {
 			const response = JSON.parse(message.data);
 			if (response.length > 0) {
 				const result = { ...response[0] };
+				callback(result);
+			}
+		};
+	}
+
+	// calculateFuelHold(weight: number, callback: (fuelFlow: number) => void) {
+	// 	const searchRequest = {
+	// 		type: 'calculateFuelHold',
+	// 		data: weight,
+	// 	};
+	// 	this.socket.send(JSON.stringify(searchRequest));
+	// 	this.socket.onmessage = (message) => {
+	// 		const response = JSON.parse(message.data);
+	// 		console.log(`FUEL FLOW: ${response}`);
+	// 		if (response.length > 0) {
+	// 			const result = response;
+	// 			callback(result);
+	// 		}
+	// 	};
+	// }
+
+	calculateFlight(request: object, callback: (data: object) => void) {
+		const searchRequest = {
+			type: 'calculateFlight',
+			data: request,
+		};
+		this.socket.send(JSON.stringify(searchRequest));
+		this.socket.onmessage = (message) => {
+			const response = JSON.parse(message.data);
+			console.log(response);
+			if (response.length > 0) {
+				const result = response;
 				callback(result);
 			}
 		};

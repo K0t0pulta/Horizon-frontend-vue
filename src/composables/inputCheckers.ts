@@ -1,6 +1,6 @@
 // проверка на ввод только латиницы
 export function inputOnlyLetters(event: KeyboardEvent) {
-	if (event.key !== 'Backspace' && event.key !== 'Delete') {
+	if (event.key !== 'Backspace' && event.key !== 'Delete' && event.key !== 'Tab') {
 		if (!/^[A-z]$/.test(event.key)) event.preventDefault();
 	}
 }

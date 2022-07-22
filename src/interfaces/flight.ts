@@ -1,3 +1,5 @@
+import { IAirport } from '@/interfaces/airport';
+
 export interface IFlight {
 	id: number,
 	flightId: string,
@@ -29,6 +31,11 @@ export interface IFlight {
 	blockFuel: number,
 	landingFuel: number,
 	tankeringFuel: boolean,
+	choosenDeparture: IAirport,
+	choosenArrival: IAirport,
+	choosenAltn1: IAirport,
+	choosenAltn2: IAirport,
+	choosenAltn3: IAirport,
 }
 
 // const emptyFlightData = reactive({

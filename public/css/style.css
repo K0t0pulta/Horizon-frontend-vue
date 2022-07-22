@@ -531,3 +531,13 @@ footer {
 .maxW-60 {
     max-width: 60%;
 }
+
+/* Login Page */
+.login-wrapper {
+	padding: 20px;
+	width: 100vw;
+	height: 100vh;
+	background-image: url('/public/img/loginPage.jpg');
+	background-repeat: no-repeat;
+	background-size: cover;
+}

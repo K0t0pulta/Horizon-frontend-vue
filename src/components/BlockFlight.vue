@@ -45,7 +45,7 @@
 								<input class="flightData_input" type="text" name="departure" autocomplete="off"
 								id="departure" v-model="flightData.departure" required minlength="3" maxlength="4"
 								:class="{empty: !flightData.departure}"	@keydown="inputOnlyLetters">
-								{{choosenDeparture.name}}
+								{{flightData.choosenDeparture.name}}
 							</label>
 						</div>
 						<div class="formSorter">
@@ -53,7 +53,7 @@
 								<input class="flightData_input" type="text" name="arrival" autocomplete="off"
 								id="arrival" v-model="flightData.arrival" required minlength="3" maxlength="4"
 								:class="{empty: !flightData.arrival}" @keydown="inputOnlyLetters">
-								{{choosenArrival.name}}
+								{{flightData.choosenArrival.name}}
 							</label>
 						</div>
 						<div>
@@ -71,7 +71,7 @@
 							<label for="altn1"  v-if="numberAltnToShow >= 1">ALTN 1
 								<input class="flightData_input" type="text" name="altn1" id="altn1"
 								autocomplete="off" maxlength="4" v-model="flightData.altn1" @keydown="inputOnlyLetters">
-								{{choosenAltn1.name}}
+								{{flightData.choosenAltn1.name}}
 							</label>
 							<span v-show="GreatCircleDistAltn1 > 0">
 							Ортодромическое расстояние: {{GreatCircleDistAltn1}} км</span>
@@ -79,13 +79,13 @@
 								<input class="flightData_input" type="text" name="altn2" id="altn2"
 								autocomplete="off" maxlength="4"
 								v-model="flightData.altn2" @keydown="inputOnlyLetters">
-								{{choosenAltn2.name}}
+								{{flightData.choosenAltn2.name}}
 							</label>
 							<label for="altn3" v-if="numberAltnToShow === 3">ALTN 3
 								<input class="flightData_input" type="text" name="altn3" id="altn3"
 								autocomplete="off" maxlength="4"
 								v-model="flightData.altn3" @keydown="inputOnlyLetters">
-								{{choosenAltn3.name}}
+								{{flightData.choosenAltn3.name}}
 							</label>
 						</div>
 					</div>
@@ -226,7 +226,8 @@
 				<button class="flightData_button mainButtons basicButtonColors" id="button-save"
 				form="flightDataForm" @click.prevent="saveFlight(choosenFlightId)" >СОХРАНИТЬ</button>
 				<button class="flightData_button mainButtons basicButtonColors"
-				id="button-compute" form="flightDataForm" formtarget="_blank" :disabled="warning">
+				id="button-compute" form="flightDataForm" formtarget="_blank" :disabled="warning"
+				@click.prevent="calculateFlight({weight: estZeroFuelWeightComputed, distAltn1: GreatCircleDistAltn1})">
 					РАССЧИТАТЬ
 				</button>
 			</div>
@@ -236,7 +237,7 @@
 
 <script setup lang="ts">
 import {
-	ref, watch, computed, reactive, watchEffect,
+	ref, watch, computed, reactive,
 } from 'vue';
 import schdeduleListStore from '@/stores/schdeduleListStore';
 import AircraftsStore from '@/stores/AircraftsStore';
@@ -252,11 +253,6 @@ import { inputOnlyLetters, inputLettersNumbers } from '@/composables/inputChecke
 const airlineData = AirlineStore();
 const aircraftList: IAircraft[] = AircraftsStore().aircrafts;
 const flightList: IFlight[] = schdeduleListStore().list;
-const choosenDeparture = reactive({}) as IAirport;
-const choosenArrival = reactive({}) as IAirport;
-const choosenAltn1 = reactive({}) as IAirport;
-const choosenAltn2 = reactive({}) as IAirport;
-const choosenAltn3 = reactive({}) as IAirport;
 const warning = ref(false);
 
 // eslint-disable-next-line no-undef
@@ -300,6 +296,11 @@ const emptyFlightData: IFlight = reactive({
 	blockFuel: 0,
 	landingFuel: 0,
 	tankeringFuel: false,
+	choosenDeparture: {} as IAirport,
+	choosenArrival: {} as IAirport,
+	choosenAltn1: {} as IAirport,
+	choosenAltn2: {} as IAirport,
+	choosenAltn3: {} as IAirport,
 });
 
 let flightData = reactive({}) as IFlight;
@@ -327,59 +328,54 @@ watch(
 		flightData.maxTakeoffWeight = activeAircraft.maxTakeoffWeight;
 	},
 );
+// отслеживание аэродрома вылета по вводу
+watch(() => flightData.departure, (departure) => {
+	if (flightData.departure.length > 2) {
+		Client.sendAirport(departure, 'departure', (el) => {
+			console.log(el);
+			if (el[0] === 'departure') Object.assign(flightData.choosenDeparture, el[1]);
+		});
+	}
+});
+// отслеживание аэродрома назначения по вводу
+watch(() => flightData.arrival, (arrival) => {
+	if (flightData.arrival.length > 2) {
+		Client.sendAirport(arrival, 'arrival', (el) => {
+			console.log(el);
+			if (el[0] === 'arrival') Object.assign(flightData.choosenArrival, el[1]);
+		});
+	}
+});
 
-watchEffect(
-	() => {
-		if (flightData.departure.length > 2) {
-			Client.sendAirport(flightData.departure, 'departure', (el) => {
-				console.log(el);
-				if (el[0] === 'departure') Object.assign(choosenDeparture, el[1]);
-			});
-		}
-	},
-);
+watch(() => flightData.altn1, (altn1) => {
+	if (flightData.altn1.length > 2) {
+		Client.sendAirport(altn1, 'altn1', (el) => {
+			console.log(el);
+			if (el[0] === 'altn1') Object.assign(flightData.choosenAltn1, el[1]);
+		});
+	}
+});
+watch(() => flightData.altn2, (altn2) => {
+	if (flightData.altn2.length > 2) {
+		Client.sendAirport(altn2, 'altn2', (el) => {
+			console.log(el);
+			if (el[0] === 'altn2') Object.assign(flightData.choosenAltn2, el[1]);
+		});
+	}
+});
+watch(() => flightData.altn3, (altn3) => {
+	if (flightData.altn3.length > 2) {
+		Client.sendAirport(altn3, 'altn3', (el) => {
+			console.log(el);
+			if (el[0] === 'altn3') Object.assign(flightData.choosenAltn3, el[1]);
+		});
+	}
+});
 
-watchEffect(
-	() => {
-		if (flightData.arrival.length > 2) {
-			Client.sendAirport(flightData.arrival, 'arrival', (el) => {
-				if (el[0] === 'arrival') Object.assign(choosenArrival, el[1]);
-			});
-		}
-	},
-);
-
-watchEffect(
-	() => {
-		if (flightData.altn1.length > 2) {
-			Client.sendAirport(flightData.altn1, 'altn1', (el) => {
-				if (el[0] === 'altn1') Object.assign(choosenAltn1, el[1]);
-			});
-		}
-	},
-);
-watchEffect(
-	() => {
-		if (flightData.altn2.length > 2) {
-			Client.sendAirport(flightData.altn2, 'altn2', (el) => {
-				if (el[0] === 'altn2') Object.assign(choosenAltn2, el[1]);
-			});
-		}
-	},
-);
-watchEffect(
-	() => {
-		if (flightData.altn3.length > 2) {
-			Client.sendAirport(flightData.altn3, 'altn3', (el) => {
-				if (el[0] === 'altn3') Object.assign(choosenAltn3, el[1]);
-			});
-		}
-	},
-);
 // расчёт ортодромического расстояния между departure/arrival
-const GreatCircleDistMain = computed(() => greatCircleCalculator(choosenDeparture, choosenArrival));
+const GreatCircleDistMain = computed(() => greatCircleCalculator(flightData.choosenDeparture, flightData.choosenArrival));
 // расчёт ортодромического расстояния между departure/arrival
-const GreatCircleDistAltn1 = computed(() => greatCircleCalculator(choosenArrival, choosenAltn1));
+const GreatCircleDistAltn1 = computed(() => greatCircleCalculator(flightData.choosenArrival, flightData.choosenAltn1));
 
 // собираем все значения input из формы  как объект и сохраняем в массив
 function saveFlight(id: number) {
@@ -413,6 +409,13 @@ function removeAltn() {
 		if (numberAltnToShow.value === 3) flightData.altn3 = '';
 		numberAltnToShow.value -= 1;
 	}
+}
+
+// расчёт топлива
+function calculateFlight(request: object) {
+	Client.calculateFlight(request, (data) => {
+		console.log(data);
+	});
 }
 
 // eslint-disable-next-line no-undef

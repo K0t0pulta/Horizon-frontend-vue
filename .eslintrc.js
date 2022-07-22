@@ -17,7 +17,7 @@ module.exports = {
 		'linebreak-style': ['error', 'windows'],
 		'no-tabs': ['off'],
 		indent: ['error', 'tab'],
-		'max-len': ['error', { code: 120 }],
+		'max-len': ['error', { code: 130 }],
 		'no-param-reassign': ['error', { props: false }],
 	},
 };

@@ -84,15 +84,6 @@ form input {
 #login-email {
 	width: 208px;
 }
-.login-wrapper {
-	padding: 20px;
-	width: 100vw;
-	height: 100vh;
-	background-image: url('/Horizon/Horizon-frontend-vue/public/img/loginPage.jpg');
-	background-repeat: no-repeat;
-	background-size: cover;
-
-}
 
 .button-wrapper {
 	display: flex;
